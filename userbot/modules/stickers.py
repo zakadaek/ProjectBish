@@ -5,7 +5,8 @@
 #
 """ Userbot module for kanging stickers or making new ones. Thanks @rupansh"""
 
-import ioimport math
+import io
+import math
 import urllib.request
 from os import remove
 from PIL import Image
