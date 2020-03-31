@@ -73,7 +73,8 @@ async def add_new_filter(new_handler):
         await new_handler.edit(success.format(keyword, 'added'))
     else:
         await new_handler.edit(success.format(keyword, 'updated'))
-
+    await sleep(2)
+    await new_handler.delete()
 
 @register(outgoing=True, pattern=r"^.stop ((@)?\w*)")
 async def remove_a_filter(r_handler):
@@ -88,7 +89,8 @@ async def remove_a_filter(r_handler):
     else:
         await r_handler.edit(
             "`Filter` **{}** `was deleted successfully`".format(filt))
-
+    await sleep(2)
+    await r_handler.delete()
 
 @register(outgoing=True, pattern="^.rmbotfilters (.*)")
 async def kick_marie_filter(event):
