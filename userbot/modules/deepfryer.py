@@ -131,7 +131,7 @@ async def check_media(reply_message):
         return data
 
 CMD_HELP.update({
-    "deepfry":
+    "deepfryer":
     ".deepfry [number]\
     \n Usage: Reply to an image or sticker to deepfry with value, more value more krispy."
 })
