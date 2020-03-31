@@ -143,8 +143,6 @@ async def promote(promt):
     # we don't have Promote permission
     except BadRequestError:
         return await promt.edit(NO_PERM)
-    await sleep(2)
-    await promt.delete()
 
     # Announce to the logging group if we have promoted successfully
     if BOTLOG:
@@ -192,8 +190,6 @@ async def demote(dmod):
     except BadRequestError:
         return await dmod.edit(NO_PERM)
     await dmod.edit("`Demoted Successfully!`")
-    await sleep(2)
-    await dmod.delete()
 
     # Announce to the logging group if we have demoted successfully
     if BOTLOG:
@@ -287,8 +283,7 @@ async def nothanos(unbon):
                 f"CHAT: {unbon.chat.title}(`{unbon.chat_id}`)")
     except UserIdInvalidError:
         await unbon.edit("`Uh oh my unban logic broke!`")
-    await sleep(2)
-    await unbon.edit()
+
 
 @register(outgoing=True, pattern="^.mute(?: |$)(.*)")
 async def spider(spdr):
@@ -390,8 +385,6 @@ async def unmoot(unmot):
                 BOTLOG_CHATID, "#UNMUTE\n"
                 f"USER: [{user.first_name}](tg://user?id={user.id})\n"
                 f"CHAT: {unmot.chat.title}(`{unmot.chat_id}`)")
-     await sleep(2)
-     await unmot.delete()
 
 
 @register(incoming=True)
@@ -458,8 +451,6 @@ async def ungmoot(un_gmute):
     else:
         # Inform about success
         await un_gmute.edit("```Ungmuted Successfully```")
-    await sleep(1.2)
-    await un_gmute.delete()
 
         if BOTLOG:
             await un_gmute.client.send_message(
