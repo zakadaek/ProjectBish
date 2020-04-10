@@ -10,7 +10,6 @@
   ],
   "repository": "https://github.com/adekmaulana/ProjectBish",
   "website": "https://telegra.ph/How-to-host-a-Telegram-Userbot-11-02",
-  "success_url": "https://t.me/PPE_Support",
   "stack": "container",
   "env": {
     "API_KEY": {
@@ -145,10 +144,6 @@
     },
     "G_DRIVE_AUTH_TOKEN_DATA": {
       "description": "Enter the Google Drive authentication data, as a JSON structure.",
-      "required": false
-    },
-    "LYDIA_API_KEY": {
-      "description": "This Module Needs CoffeeHouse API to work. so Join https://telegram.dog/IntellivoidDev and send #activateapi and follow instructions.",
       "required": false
     },
     "WEATHER_DEFCITY": {
