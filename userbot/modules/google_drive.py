@@ -1,7 +1,20 @@
-# Copyright (C) 2019 Adek Maulana
+# Copyright (C) 2020 Adek Maulana
 #
-# Ported and add more features from my script inside build-kernel.py
+# SPDX-License-Identifier: GPL-3.0-or-later
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """ - ProjectBish Google Drive managers - """
+import io
 import os
 import pickle
 import base64
@@ -20,7 +33,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google.auth.transport.requests import Request
-from googleapiclient.http import MediaFileUpload
+from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
 
 from userbot import (
     G_DRIVE_DATA, G_DRIVE_CLIENT_ID, G_DRIVE_CLIENT_SECRET,
@@ -117,6 +130,12 @@ async def generate_credentials(gdrive):
         await gdrive.edit("`You already authorized token...`")
         await asyncio.sleep(1.5)
         return await gdrive.delete()
+    """ - Abort if user don't have heroku credentials - """
+    if None in [HEROKU_API_KEY or HEROKU_APP_NAME]:
+        return await gdrive.edit(
+            "`Invalid heroku credentials...`\n\n"
+            "`Please set HEROKU_API_KEY and HEROKU_APP_NAME first.`"
+        )
     """ - Generate credentials - """
     if G_DRIVE_DATA is not None:
         configs = json.loads(G_DRIVE_DATA)
@@ -155,22 +174,19 @@ async def generate_credentials(gdrive):
         await gdrive.client.delete_messages(BOTLOG_CHATID, r.id)
         """ - Unpack credential objects into strings - """
         creds = base64.b64encode(pickle.dumps(creds)).decode()
-    if HEROKU_API_KEY is None or HEROKU_APP_NAME is None:
-        await gdrive.edit(
-            "**HEROKU_APP_NAME** `and` **HEROKU_API_KEY**\n"
-            "`is empty please setup first...`"
-        )
-        await asyncio.sleep(1.5)
-        gdrive.delete()
-    else:
         await gdrive.edit("`Credentials created...`")
-        heroku = heroku3.from_key(HEROKU_API_KEY)
-        heroku_configvars = heroku.app(HEROKU_APP_NAME).config()
-        await gdrive.respond("`Restarting in 3s to initialize token...`")
-        await asyncio.sleep(3)
-        await gdrive.delete()
-        heroku_configvars["G_DRIVE_AUTH_TOKEN_DATA"] = creds
-    return
+    heroku = heroku3.from_key(HEROKU_API_KEY)
+    configvars = heroku.app(HEROKU_APP_NAME).config()
+    msg = await gdrive.respond("`Restarting in 3s to initialize token...`")
+    await asyncio.sleep(1)
+    sleep = 1
+    while (sleep <= 3):
+        await msg.edit(f"`{sleep}`")
+        await asyncio.sleep(1)
+        sleep += 1
+    await gdrive.client.delete_messages(gdrive.chat_id, msg.id)
+    await gdrive.delete()
+    return await save_credentials(configvars, creds)
 
 
 async def create_app(gdrive):
@@ -186,10 +202,15 @@ async def create_app(gdrive):
             """ - Refresh credentials - """
             creds.refresh(Request())
         else:
-            return await gdrive.edit(
-                "`Credentials is empty, please generate it...`")
+            await gdrive.edit("`Credentials is empty, please generate it...`")
+            return False
     service = build('drive', 'v3', credentials=creds, cache_discovery=False)
     return service
+
+
+async def save_credentials(configvars, creds):
+    """ - Save into heroku ConfigVars - """
+    configvars["G_DRIVE_AUTH_TOKEN_DATA"] = creds
 
 
 async def get_raw_name(file_path):
@@ -290,6 +311,108 @@ async def download(gdrive, service, uri=None):
     return
 
 
+async def download_gdrive(gdrive, service, uri):
+    """ - remove drivesdk and export=download from link - """
+    if not isdir(TEMP_DOWNLOAD_DIRECTORY):
+        os.mkdir(TEMP_DOWNLOAD_DIRECTORY)
+    if "&export=download" in uri:
+        uri = uri.split("&export=download")[0]
+    elif "file/d/" in uri and "/view" in uri:
+        uri = uri.split("?usp=drivesdk")[0]
+    try:
+        file_Id = uri.split("uc?id=")[1]
+    except IndexError:
+        try:
+            file_Id = uri.split("open?id=")[1]
+        except IndexError:
+            try:
+                if "/view" in uri:
+                    file_Id = uri.split("/")[-2]
+            except IndexError:
+                """ - if error parse in url, assume given value is Id - """
+                file_Id = uri
+    file = service.files().get(fileId=file_Id,
+                               fields='name, mimeType').execute()
+    file_name = file.get('name')
+    mimeType = file.get('mimeType')
+    if mimeType == 'application/vnd.google-apps.folder':
+        return await gdrive.edit("`Aborting, folder download not support`")
+    file_path = TEMP_DOWNLOAD_DIRECTORY + file_name
+    request = service.files().get_media(fileId=file_Id)
+    with io.FileIO(file_path, 'wb') as df:
+        downloader = MediaIoBaseDownload(df, request)
+        complete = False
+        current_time = time.time()
+        display_message = None
+        while complete is False:
+            status, complete = downloader.next_chunk()
+            if status:
+                file_size = status.total_size
+                diff = time.time() - current_time
+                downloaded = status.resumable_progress
+                percentage = downloaded / file_size * 100
+                speed = round(downloaded / diff, 2)
+                eta = round((file_size - downloaded) / speed)
+                prog_str = "`Downloading...` | [{0}{1}] `{2}%`".format(
+                    "".join(["#" for i in range(math.floor(percentage / 5))]),
+                    "".join(["**-**"
+                             for i in range(20 - math.floor(percentage / 5))]),
+                    round(percentage, 2))
+                current_message = (
+                    "`[FILE - DOWNLOAD]`\n\n"
+                    f"`Name   :`\n`{file_name}`\n\n"
+                    "`Status :`\n"
+                    f"{prog_str}\n"
+                    f"`{humanbytes(downloaded)} of {humanbytes(file_size)} "
+                    f"@ {humanbytes(speed)}`\n"
+                    f"`ETA` -> {time_formatter(eta)}"
+                )
+                if display_message != current_message:
+                    try:
+                        await gdrive.edit(current_message)
+                        display_message = current_message
+                    except Exception:
+                        pass
+        await gdrive.edit(
+            "`[FILE - DOWNLOAD]`\n\n"
+            f"`Name   :`\n`{file_name}`\n\n"
+            f"`Path   :` `{file_path}`\n"
+            "`Status :` **OK**\n"
+            "`Reason :` Successfully downloaded..."
+        )
+        msg = await gdrive.respond("`Answer the question in your BOTLOG group`")
+    async with gdrive.client.conversation(BOTLOG_CHATID) as conv:
+        ask = await conv.send_message("`Proceed with mirroring? [y/N]`")
+        try:
+            r = conv.wait_event(
+              events.NewMessage(outgoing=True, chats=BOTLOG_CHATID))
+            r = await r
+        except Exception:
+            ans = 'N'
+        else:
+            ans = r.message.message.strip()
+            await gdrive.client.delete_messages(BOTLOG_CHATID, r.id)
+        await gdrive.client.delete_messages(gdrive.chat_id, msg.id)
+        await gdrive.client.delete_messages(BOTLOG_CHATID, ask.id)
+    if ans.capitalize() == 'N':
+        return
+    elif ans.capitalize() == "Y":
+        result = await upload(gdrive, service, file_path, file_name, mimeType)
+        await gdrive.respond(
+            "`[FILE - UPLOAD]`\n\n"
+            f" • `Name     :` `{file_name}`\n"
+            " • `Status   :` **OK**\n"
+            f" • `URL      :` [{file_name}]({result[0]})\n"
+            f" • `Download :` [{file_name}]({result[1]})"
+        )
+        return await gdrive.delete()
+    else:
+        return await gdrive.client.send_message(
+            BOTLOG_CHATID,
+            "`Invalid answer type [Y/N] only...`"
+        )
+
+
 async def create_dir(service, folder_name):
     metadata = {
         'name': folder_name,
@@ -375,7 +498,7 @@ async def upload(gdrive, service, file_path, file_name, mimeType):
                 round(percentage, 2))
             current_message = (
                 "`[FILE - UPLOAD]`\n\n"
-                f"`Name  :`\n`{file_name}`\n\n"
+                f"`Name   :`\n`{file_name}`\n\n"
                 "`Status :`\n"
                 f"{prog_str}\n"
                 f"`{humanbytes(uploaded)} of {humanbytes(file_size)} "
@@ -437,6 +560,8 @@ async def google_drive_managers(gdrive):
     """ - Google Drive folder/file management - """
     await gdrive.edit("`Sending information...`")
     service = await create_app(gdrive)
+    if service is False:
+        return
     f_name = gdrive.pattern_match.group(2).strip()
     exe = gdrive.pattern_match.group(1)
     """ - Only if given value are mkdir - """
@@ -593,6 +718,8 @@ async def google_drive(gdrive):
             f" • `Reason :` Confused to upload file or the replied message/media."
         )
     service = await create_app(gdrive)
+    if service is False:
+        return
     if isfile(value):
         file_path = value
         if file_path.endswith(".torrent"):
@@ -614,7 +741,24 @@ async def google_drive(gdrive):
         )
     else:
         if re.findall(r'\bhttps?://.*\.\S+', value) or "magnet:?" in value:
-            uri = value.split()
+            try:
+                uri = re.findall(r'\bhttps?://drive\.google\.com\S+', value)[0]
+            except IndexError:
+                uri = value.split()
+            else:
+                """ - Link is google drive fallback to download - """
+                return await download_gdrive(gdrive, service, uri)
+        else:
+            if any(map(str.isdigit, value)):
+                one = True
+            else:
+                one = False
+            if "-" in value or "_" in value:
+                two = True
+            else:
+                two = False
+            if True in [one or two]:
+                return await download_gdrive(gdrive, service, value)
         if not uri and not gdrive.reply_to_msg_id:
             return await gdrive.edit(
                 "`[VALUE - ERROR]`\n\n"
