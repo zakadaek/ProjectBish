@@ -6,7 +6,7 @@
 """ Userbot module for filter commands """
 
 from asyncio import sleep
-from re import fullmatch, IGNORECASE, escape
+from re import search, IGNORECASE, escape
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP
 from userbot.events import register
 
@@ -26,7 +26,9 @@ async def filter_incoming_handler(handler):
             if not filters:
                 return
             for trigger in filters:
-                pro = fullmatch(trigger.keyword, name, flags=IGNORECASE)
+                pattern = (
+                    r"( |^|[^\w])" + escape(trigger.keyword) + r"( |$|[^\w])")
+                pro = search(pattern, name, flags=IGNORECASE)
                 if pro and trigger.f_mesg_id:
                     msg_o = await handler.client.get_messages(
                         entity=BOTLOG_CHATID, ids=int(trigger.f_mesg_id))
@@ -37,7 +39,7 @@ async def filter_incoming_handler(handler):
         pass
 
 
-@register(outgoing=True, pattern=r"^.filter ((@)?\w*)")
+@register(outgoing=True, pattern=r"^.filter (.*)")
 async def add_new_filter(new_handler):
     """ For .filter command, allows adding new filters in a chat """
     try:
@@ -45,8 +47,13 @@ async def add_new_filter(new_handler):
     except AttributeError:
         await new_handler.edit("`Running on Non-SQL mode!`")
         return
-    keyword = new_handler.pattern_match.group(1)
-    string = new_handler.text.partition(keyword)[2]
+    value = new_handler.pattern_match.group(1).split(None, 1)
+    """ - The first words after .filter(space) is the keyword - """
+    keyword = value[0]
+    try:
+        string = value[1]
+    except IndexError:
+        string = None
     msg = await new_handler.get_reply_message()
     msg_id = None
     if msg and msg.media and not string:
@@ -68,14 +75,14 @@ async def add_new_filter(new_handler):
     elif new_handler.reply_to_msg_id and not string:
         rep_msg = await new_handler.get_reply_message()
         string = rep_msg.text
-    success = "`Filter` **{}** `{} successfully`"
+    success = "`Filter`  **{}**  `{} successfully`."
     if add_filter(str(new_handler.chat_id), keyword, string, msg_id) is True:
         await new_handler.edit(success.format(keyword, 'added'))
     else:
         await new_handler.edit(success.format(keyword, 'updated'))
 
 
-@register(outgoing=True, pattern=r"^.stop ((@)?\w*)")
+@register(outgoing=True, pattern=r"^.stop (.*)")
 async def remove_a_filter(r_handler):
     """ For .stop command, allows you to remove a filter from a chat. """
     try:
@@ -84,10 +91,10 @@ async def remove_a_filter(r_handler):
         return await r_handler.edit("`Running on Non-SQL mode!`")
     filt = r_handler.pattern_match.group(1)
     if not remove_filter(r_handler.chat_id, filt):
-        await r_handler.edit("`Filter` **{}** `doesn't exist.`".format(filt))
+        await r_handler.edit("`Filter`  **{}**  `doesn't exist`.".format(filt))
     else:
         await r_handler.edit(
-            "`Filter` **{}** `was deleted successfully`".format(filt))
+            "`Filter`  **{}**  `was deleted successfully`.".format(filt))
 
 
 @register(outgoing=True, pattern="^.rmbotfilters (.*)")
