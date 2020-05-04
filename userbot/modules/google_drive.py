@@ -27,7 +27,6 @@ import logging
 
 import userbot.modules.sql_helper.google_drive_sql as helper
 
-from userbot.modules.sql_helper import delete_table
 from os.path import isfile, isdir, join
 from mimetypes import guess_type
 
@@ -175,12 +174,7 @@ async def generate_credentials(gdrive):
         """ - Unpack credential objects into strings - """
         creds = base64.b64encode(pickle.dumps(creds)).decode()
         await gdrive.edit("`Credentials created...`")
-    try:
-        helper.save_credentials(str(gdrive.from_id), creds)
-    except Exception:
-        for name in ['creds', 'gdrive']:
-            delete_table(name)
-        helper.save_credentials(str(gdrive.from_id), creds)
+    helper.save_credentials(str(gdrive.from_id), creds)
     await gdrive.delete()
     return
 
@@ -197,14 +191,8 @@ async def create_app(gdrive):
             await gdrive.edit("`Refreshing credentials...`")
             """ - Refresh credentials - """
             creds.refresh(Request())
-            try:
-                helper.save_credentials(str(gdrive.from_id), base64.b64encode(
-                    pickle.dumps(creds)).decode())
-            except Exception:
-                for name in ['creds', 'gdrive']:
-                    delete_table(name)
-                helper.save_credentials(str(gdrive.from_id), base64.b64encode(
-                    pickle.dumps(creds)).decode())
+            helper.save_credentials(str(
+               gdrive.from_id), base64.b64encode(pickle.dumps(creds)).decode())
         else:
             await gdrive.edit("`Credentials is empty, please generate it...`")
             return False
@@ -246,14 +234,14 @@ async def download(gdrive, service, uri=None):
         if isfile(uri) and uri.endswith(".torrent"):
             downloads = aria2.add_torrent(
                 uri,
-                dict(dir=full_path),
                 uris=None,
+                options={'dir': full_path},
                 position=None)
         else:
             uri = [uri]
             downloads = aria2.add_uris(
                 uri,
-                dict(dir=full_path),
+                options={'dir': full_path},
                 position=None)
         gid = downloads.gid
         await check_progress_for_dl(gdrive, gid, previous=None)
