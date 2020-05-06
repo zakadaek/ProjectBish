@@ -360,8 +360,10 @@ async def download_gdrive(gdrive, service, uri):
         if '404' in str(e):
             drive = 'https://drive.google.com'
             url = f'{drive}/uc?export=download&id={file_Id}'
+
             session = requests.session()
             download = session.get(url, stream=True)
+
             try:
                 download.headers['Content-Disposition']
             except KeyError:
@@ -370,31 +372,46 @@ async def download_gdrive(gdrive, service, uri):
                     export = drive + page.find('a', {'id': 'uc-download-link'}
                                                ).get('href')
                 except AttributeError:
-                    text = (
-                        page.find('p', {'class': 'uc-error-caption'}).text
-                        + '\n' +
-                        page.find('p', {'class': 'uc-error-subcaption'}).text
-                    )
-                    reply += (
-                        "`[FILE - ERROR]`\n\n"
-                        "`Status :` **BAD** - failed to download...\n"
-                        f"`Reason :`\n{text}"
-                    )
+                    try:
+                        error = (
+                            page.find('p', {'class': 'uc-error-caption'}).text
+                            + '\n' +
+                            page.find('p', {'class': 'uc-error-subcaption'}
+                                      ).text
+                        )
+                    except Exception:
+                        reply += (
+                            "`[FILE - ERROR]`\n\n"
+                            "`Status :` **BAD** - failed to download.\n"
+                            "`Reason :` uncaught err."
+                        )
+                    else:
+                        reply += (
+                            "`[FILE - ERROR]`\n\n"
+                            "`Status :` **BAD** - failed to download.\n"
+                            f"`Reason :` {error}"
+                        )
                     return reply
                 download = session.get(export, stream=True)
-            file_size = human_to_bytes(
-                page.find('span', {'class': 'uc-name-size'}
-                          ).text.split()[-1].strip('()'))
+                file_size = human_to_bytes(
+                    page.find('span', {'class': 'uc-name-size'}
+                              ).text.split()[-1].strip('()'))
+            else:
+                file_size = int(download.headers['Content-Length'])
+
             file_name = re.search(
                 'filename="(.*)"', download.headers["Content-Disposition"]
             ).group(1)
             file_path = TEMP_DOWNLOAD_DIRECTORY + file_name
             with io.FileIO(file_path, 'wb') as files:
+                CHUNK_SIZE = None
                 current_time = time.time()
                 display_message = None
                 first = True
-                for chunk in download.iter_content():
-                    files.write(chunk)
+                for chunk in download.iter_content(CHUNK_SIZE):
+                    if not chunk:
+                        break
+
                     diff = time.time() - current_time
                     if first is True:
                         downloaded = len(chunk)
@@ -418,10 +435,14 @@ async def download_gdrive(gdrive, service, uri):
                         f" @ {humanbytes(speed)}`\n"
                         f"`ETA` -> {time_formatter(eta)}"
                     )
-                    if display_message != current_message or (
+                    if round(
+                      diff % 10.00) == 0 and (display_message
+                                              != current_message) or (
                       downloaded == file_size):
                         await gdrive.edit(current_message)
                         display_message = current_message
+                    files.write(chunk)
+                    files.flush()
     else:
         file_name = file.get('name')
         mimeType = file.get('mimeType')
