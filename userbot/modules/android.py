@@ -94,11 +94,112 @@ async def codename_info(request):
             codename = item['device']
             model = item['model']
             reply += f'{brand} {name}\n' \
-                f'**Codename**: `{codename}`\n' \
+               f'**Codename**: `{codename}`\n' \
                 f'**Model**: {model}\n\n'
     else:
         reply = f"`Couldn't find {device} codename!`\n"
     await request.edit(reply)
+
+
+@register(outgoing=True, pattern="^.pixeldl(?: |$)(.*)")
+async def download_api(dl):
+    if not os.path.isdir(TEMP_DOWNLOAD_DIRECTORY):
+        os.mkdir(TEMP_DOWNLOAD_DIRECTORY)
+    await dl.edit("`Collecting information...`")
+    URL = dl.pattern_match.group(1)
+    URL_MSG = await dl.get_reply_message()
+    if URL:
+        pass
+    elif URL_MSG:
+        URL = URL_MSG.text
+    else:
+        await dl.edit("`Empty information...`")
+        return
+    if not re.findall(r'\bhttps?://download.*pixelexperience.*\.org\S+', URL):
+        await dl.edit("`Invalid information...`")
+        return
+    await dl.edit("`Sending information...`")
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.binary_location = GOOGLE_CHROME_BIN
+    chrome_options.add_argument("--window-size=1920x1080")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-gpu")
+    prefs = {'download.default_directory': './'}
+    chrome_options.add_experimental_option('prefs', prefs)
+    driver = webdriver.Chrome(executable_path=CHROME_DRIVER,
+                              options=chrome_options)
+    await dl.edit("`Getting information...`")
+    driver.get(URL)
+    driver.command_executor._commands["send_command"] = (
+         "POST", '/session/$sessionId/chromium/send_command')
+    params = {
+        'cmd': 'Page.setDownloadBehavior',
+        'params': {
+            'behavior': 'allow',
+            'downloadPath': TEMP_DOWNLOAD_DIRECTORY
+        }
+    }
+    driver.execute("send_command", params)
+    md5_origin = driver.find_elements_by_class_name(
+        'download__meta')[0].text.split('\n')[2].split(':')[1].strip()
+    file_name = driver.find_elements_by_class_name(
+        'download__meta')[0].text.split('\n')[1].split(':')[1].strip()
+    file_path = TEMP_DOWNLOAD_DIRECTORY + file_name
+    download = driver.find_elements_by_class_name("download__btn")[0]
+    download.click()
+    x = download.get_attribute('text').split()[-2:]
+    file_size = human_to_bytes((x[0] + x[1]).strip('()'))
+    await asyncio.sleep(5)
+    start = time.time()
+    display_message = None
+    complete = False
+    while complete is False:
+        try:
+            downloaded = os.stat(file_path + '.crdownload').st_size
+            status = "Downloading"
+        except Exception:
+            downloaded = os.stat(file_path).st_size
+            file_size = downloaded
+            status = "Checking"
+        diff = time.time() - start
+        percentage = downloaded / file_size * 100
+        speed = round(downloaded / diff, 2)
+        eta = round((file_size - downloaded) / speed)
+        prog_str = "`{0}` | [{1}{2}] `{3}%`".format(
+            status,
+            "".join(["●" for i in range(
+                    math.floor(percentage / 10))]),
+            "".join(["○"for i in range(
+                    10 - math.floor(percentage / 10))]),
+            round(percentage, 2))
+        current_message = (
+            "`[DOWNLOAD]`\n\n"
+            f"`{file_name}`\n"
+            f"`Status`\n{prog_str}\n"
+            f"`{humanbytes(downloaded)} of {humanbytes(file_size)}"
+            f" @ {humanbytes(speed)}`\n"
+            f"`ETA` -> {time_formatter(eta)}"
+        )
+        if round(diff % 10.00) == 0 and display_message != current_message or (
+          downloaded == file_size):
+            await dl.edit(current_message)
+            display_message = current_message
+        if downloaded == file_size:
+            MD5 = await md5(file_path)
+            if md5_origin == MD5:
+                complete = True
+            else:
+                await dl.edit("`Download corrupt...`")
+                os.remove(file_path)
+                return
+    await dl.respond(
+        f"`{file_name}`\n\n"
+        f"Successfully downloaded to `{file_path}`."
+    )
+    await dl.delete()
+    return
 
 
 @register(outgoing=True, pattern=r"^.specs(?: |)([\S]*)(?: |)([\s\S]*)")
