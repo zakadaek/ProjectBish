@@ -5,12 +5,22 @@
 #
 """ Userbot module containing commands related to android"""
 
+import asyncio
 import re
+import os
+import time
+import math
+
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from requests import get
 from bs4 import BeautifulSoup
 
-from userbot import CMD_HELP
+from userbot import (
+    CMD_HELP, TEMP_DOWNLOAD_DIRECTORY, GOOGLE_CHROME_BIN, CHROME_DRIVER
+)
 from userbot.events import register
+from userbot.utils import humanbytes, time_formatter, md5, human_to_bytes
 
 GITHUB = 'https://github.com'
 DEVICES_DATA = ('https://raw.githubusercontent.com/androidtrackers/'
@@ -289,6 +299,8 @@ CMD_HELP.update({
     "\nUsage: Get info about android device codename or model."
     "\n\n>`.codename <brand> <device>`"
     "\nUsage: Search for android device codename."
+    "\n\n>`.pixeldl` **<download.pixelexperience.org>**"
+    "\nUsage: Download pixel experience ROM into your userbot server."
     "\n\n>`.specs <brand> <device>`"
     "\nUsage: Get device specifications info."
     "\n\n>`.twrp <codename>`"
