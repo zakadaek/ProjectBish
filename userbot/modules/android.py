@@ -11,16 +11,14 @@ import os
 import time
 import math
 
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from requests import get
 from bs4 import BeautifulSoup
 
-from userbot import (
-    CMD_HELP, TEMP_DOWNLOAD_DIRECTORY, GOOGLE_CHROME_BIN, CHROME_DRIVER
-)
+from userbot import CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
 from userbot.events import register
-from userbot.utils import humanbytes, time_formatter, md5, human_to_bytes
+from userbot.utils import (
+    chrome, humanbytes, time_formatter, md5, human_to_bytes
+)
 
 GITHUB = 'https://github.com'
 DEVICES_DATA = ('https://raw.githubusercontent.com/androidtrackers/'
@@ -113,8 +111,6 @@ async def codename_info(request):
 
 @register(outgoing=True, pattern="^.pixeldl(?: |$)(.*)")
 async def download_api(dl):
-    if not os.path.isdir(TEMP_DOWNLOAD_DIRECTORY):
-        os.mkdir(TEMP_DOWNLOAD_DIRECTORY)
     await dl.edit("`Collecting information...`")
     URL = dl.pattern_match.group(1)
     URL_MSG = await dl.get_reply_message()
@@ -128,51 +124,55 @@ async def download_api(dl):
     if not re.findall(r'\bhttps?://download.*pixelexperience.*\.org\S+', URL):
         await dl.edit("`Invalid information...`")
         return
-    await dl.edit("`Sending information...`")
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.binary_location = GOOGLE_CHROME_BIN
-    chrome_options.add_argument("--window-size=1920x1080")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-gpu")
-    prefs = {'download.default_directory': './'}
-    chrome_options.add_experimental_option('prefs', prefs)
-    driver = webdriver.Chrome(executable_path=CHROME_DRIVER,
-                              options=chrome_options)
+    driver = await chrome()
     await dl.edit("`Getting information...`")
     driver.get(URL)
-    driver.command_executor._commands["send_command"] = (
-         "POST", '/session/$sessionId/chromium/send_command')
-    params = {
-        'cmd': 'Page.setDownloadBehavior',
-        'params': {
-            'behavior': 'allow',
-            'downloadPath': TEMP_DOWNLOAD_DIRECTORY
-        }
-    }
-    driver.execute("send_command", params)
-    md5_origin = driver.find_elements_by_class_name(
-        'download__meta')[0].text.split('\n')[2].split(':')[1].strip()
-    file_name = driver.find_elements_by_class_name(
-        'download__meta')[0].text.split('\n')[1].split(':')[1].strip()
+    error = driver.find_elements_by_class_name("swal2-content")
+    if len(error) > 0:
+        if error[0].text == "File Not Found.":
+            await dl.edit(f"`FileNotFoundError`: {URL} is not found.")
+            return
+    datas = driver.find_elements_by_class_name('download__meta')
+    """ - enumerate data to make sure we download the matched version - """
+    md5_origin = None
+    i = None
+    for index, value in enumerate(datas):
+        for data in value.text.split("\n"):
+            if data.startswith("MD5"):
+                md5_origin = data.split(':')[1].strip()
+                i = index
+                break
+        if md5_origin is not None and i is not None:
+            break
+    if md5_origin is None and i is None:
+        await dl.edit("`There is no match version available...`")
+    if URL.endswith('/'):
+        file_name = URL.split("/")[-2]
+    else:
+        file_name = URL.split("/")[-1]
     file_path = TEMP_DOWNLOAD_DIRECTORY + file_name
-    download = driver.find_elements_by_class_name("download__btn")[0]
+    download = driver.find_elements_by_class_name("download__btn")[i]
     download.click()
-    x = download.get_attribute('text').split()[-2:]
-    file_size = human_to_bytes((x[0] + x[1]).strip('()'))
-    await asyncio.sleep(5)
-    start = time.time()
+    await dl.edit("`Starting download...`")
+    file_size = human_to_bytes(download.text.split(None, 3)[-1].strip('()'))
     display_message = None
     complete = False
+    start = time.time()
     while complete is False:
-        try:
-            downloaded = os.stat(file_path + '.crdownload').st_size
-            status = "Downloading"
-        except Exception:
+        if os.path.isfile(file_path + '.crdownload'):
+            try:
+                downloaded = os.stat(file_path + '.crdownload').st_size
+                status = "Downloading"
+            except OSError:  # Rare case
+                await asyncio.sleep(1)
+                continue
+        elif os.path.isfile(file_path):
             downloaded = os.stat(file_path).st_size
             file_size = downloaded
             status = "Checking"
+        else:
+            await asyncio.sleep(0.3)
+            continue
         diff = time.time() - start
         percentage = downloaded / file_size * 100
         speed = round(downloaded / diff, 2)
@@ -197,18 +197,23 @@ async def download_api(dl):
             await dl.edit(current_message)
             display_message = current_message
         if downloaded == file_size:
+            if not os.path.isfile(file_path):  # Rare case
+                await asyncio.sleep(1)
+                continue
             MD5 = await md5(file_path)
             if md5_origin == MD5:
                 complete = True
             else:
                 await dl.edit("`Download corrupt...`")
                 os.remove(file_path)
+                driver.quit()
                 return
     await dl.respond(
         f"`{file_name}`\n\n"
         f"Successfully downloaded to `{file_path}`."
     )
     await dl.delete()
+    driver.quit()
     return
 
 
