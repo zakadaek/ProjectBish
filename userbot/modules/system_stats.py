@@ -131,7 +131,7 @@ async def pipcheck(pip):
 @register(outgoing=True, pattern=r"^\.(?:alive|on)\s?(.)?")
 async def amireallyalive(alive):
     """ For .on command, check if the bot is running.  """
-    await alive.edit ("`ProjectBish` is running with f'`{UPSTREAM_REPO_BRANCH}`'\n"
+    await alive.edit (f"`ProjectBish` is running with `{UPSTREAM_REPO_BRANCH}`\n"
                      f"=====================================\n"
                      f"•  User             : {DEFAULTUSER}\n"
                      f"•  Python           : `{python_version()}`\n"
