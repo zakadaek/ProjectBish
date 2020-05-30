@@ -19,10 +19,21 @@ async def help(event):
         else:
             await event.edit("Please specify a valid module name.")
     else:
-        await event.edit("Please specify which module do you want help for !!"
-                         "\nUsage: .help <module name>")
-        string = "-  "
+        head = "**Help for** [ProjectBish](https://github.com/BianSepang/ProjectBish)"
+        head2 = "Please specify which module do you want help for !!"
+        head3 = "Usage: .help <module name>"
+        head4 = "List for all available command below: "
+        string = ""
+        sep1 = "••••••••••••••••••••••••••••••••••••••••••••••"
+        sep2 = "========================================="
         for i in CMD_HELP:
             string += "`" + str(i)
-            string += "`  -  "
-        await event.reply(string)
+            string += "`  |  "
+        await event.edit(f"{head}\
+              \n{sep2}\
+              \n{head2}\
+              \n{head3}\
+              \n{sep2}\
+              \n{head4}\
+              \n\n{string}\
+              \n{sep1}")
