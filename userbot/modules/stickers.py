@@ -1,6 +1,6 @@
 # Copyright (C) 2019 The Raphielscape Company LLC.
 #
-# Licensed under the Raphielscape Public License, Version 1.c (the "License");
+# Licensed under the Raphielscape Public License, Version 1.d (the "License");
 # you may not use this file except in compliance with the License.
 #
 """ Userbot module for kanging stickers or making new ones. Thanks @rupansh"""
@@ -19,20 +19,24 @@ from telethon.tl.types import InputStickerSetID
 from telethon.tl.types import DocumentAttributeSticker
 
 KANGING_STR = [
-    "Bentar nyeduh Kopi Dulu...",
-    "Mikir dulu hehe...",
-    "Masukin Sticker di my pack...",
-    "Ngekang Ni Sticker...",
-    "Hey Ini Sticker Bagus!\nGimana Jika Aku kang?!..",
-    "hehe Bentar Bentar bakar udut\nhehe.",
-    "Ay Coba liat (☉｡☉)!→\nApa Luu...",
-    "Bapac Toing ke Mekkah, Di mekkah eh masuk angin, Bisa ini gw kangin?!",
-    "Compile This Sticker \nHehe...",
-    "Mr.Cabul Sticker mu bagus ni, minta yakk... ",
+    "Eh... Koq bagus... aku curry ahhh :3",
+    "Aku curry ya kakak :)",
+    "Curry Sticker dulu yee kan",
+    "ehh, mantep nih.....aku ambil ya qaqa",
+    "Bagus eaaaa....\nAmbil ahh....",
+    "Ini Sticker aku ambil yaa\nDUARR!",
+    "leh ugha ni Sticker\nCurry ahh~",
+    "Pim Pim Pom!!!\nni Sticker punya aing sekarang hehe",
+    "Bentar boss, ane curry dulu",
+    "Ihh, bagus nih\nCurry ahh~",
+    "Curry lagi yee kan.....",
+    "CURRY TROSS!!!",
+	"Bolehkah saya curry ni sticker\nau ah curry aja hehe",
+	"Curry Sticker ahh.....",
 ]
 
 
-@register(outgoing=True, pattern="^.kang")
+@register(outgoing=True, pattern="^.curry")
 async def kang(args):
     """ For .kang command, kangs stickers or creates new ones. """
     user = await bot.get_me()
@@ -72,9 +76,11 @@ async def kang(args):
             is_anim = True
             photo = 1
         else:
-            return await args.edit("`Unsupported File!`")
+            await args.edit("`Unsupported File!`")
+            return
     else:
-        return await args.edit("`I can't kang that...`")
+        await args.edit("`I can't kang that...`")
+        return
 
     if photo:
         splat = args.text.split()
@@ -165,11 +171,11 @@ async def kang(args):
                         await conv.get_response()
                         # Ensure user doesn't get spamming notifications
                         await bot.send_read_acknowledge(conv.chat_id)
-                        return await args.edit(
-                            "`Sticker added in a Different Pack !"
-                            "\nThis Pack is Newly created!"
-                            f"\nYour pack can be found [here](t.me/addstickers/{packname})",
-                            parse_mode='md')
+                        await args.edit(f"`Sticker added in a Different Pack !\
+                            \nThis Pack is Newly created!\
+                            \nYour pack can be found [here](t.me/addstickers/{packname})",
+                                        parse_mode='md')
+                        return
                 if is_anim:
                     await conv.send_file('AnimatedSticker.tgs')
                     remove('AnimatedSticker.tgs')
@@ -178,9 +184,10 @@ async def kang(args):
                     await conv.send_file(file, force_document=True)
                 rsp = await conv.get_response()
                 if "Sorry, the file type is invalid." in rsp.text:
-                    return await args.edit(
+                    await args.edit(
                         "`Failed to add sticker, use` @Stickers `bot to add the sticker manually.`"
                     )
+                    return
                 await conv.send_message(emoji)
                 # Ensure user doesn't get spamming notifications
                 await bot.send_read_acknowledge(conv.chat_id)
@@ -208,9 +215,10 @@ async def kang(args):
                     await conv.send_file(file, force_document=True)
                 rsp = await conv.get_response()
                 if "Sorry, the file type is invalid." in rsp.text:
-                    return await args.edit(
+                    await args.edit(
                         "`Failed to add sticker, use` @Stickers `bot to add the sticker manually.`"
                     )
+                    return
                 await conv.send_message(emoji)
                 # Ensure user doesn't get spamming notifications
                 await bot.send_read_acknowledge(conv.chat_id)
@@ -233,10 +241,9 @@ async def kang(args):
                 # Ensure user doesn't get spamming notifications
                 await bot.send_read_acknowledge(conv.chat_id)
 
-        await args.edit(
-            "`Sticker kanged successfully!`"
-            f"\nPack can be found [here](t.me/addstickers/{packname})",
-            parse_mode='md')
+        await args.edit(f"`Asyique Sukses!`\
+            \n[Klik Disini](t.me/addstickers/{packname}) kalo mau liat hasil curryan",
+                        parse_mode='md')
 
 
 async def resize_photo(photo):
@@ -267,21 +274,25 @@ async def resize_photo(photo):
 @register(outgoing=True, pattern="^.stkrinfo$")
 async def get_pack_info(event):
     if not event.is_reply:
-        return await event.edit("`I can't fetch info from nothing, can I ?!`")
+        await event.edit("`I can't fetch info from nothing, can I ?!`")
+        return
 
     rep_msg = await event.get_reply_message()
     if not rep_msg.document:
-        return await event.edit("`Reply to a sticker to get the pack details`")
+        await event.edit("`Reply to a sticker to get the pack details`")
+        return
 
     try:
         stickerset_attr = rep_msg.document.attributes[1]
         await event.edit(
             "`Fetching details of the sticker pack, please wait..`")
     except BaseException:
-        return await event.edit("`This is not a sticker. Reply to a sticker.`")
+        await event.edit("`This is not a sticker. Reply to a sticker.`")
+        return
 
     if not isinstance(stickerset_attr, DocumentAttributeSticker):
-        return await event.edit("`This is not a sticker. Reply to a sticker.`")
+        await event.edit("`This is not a sticker. Reply to a sticker.`")
+        return
 
     get_stickerset = await bot(
         GetStickerSetRequest(
@@ -293,18 +304,16 @@ async def get_pack_info(event):
         if document_sticker.emoticon not in pack_emojis:
             pack_emojis.append(document_sticker.emoticon)
 
-    OUTPUT = (
-        f"**Sticker Title:** `{get_stickerset.set.title}\n`"
-        f"**Sticker Short Name:** `{get_stickerset.set.short_name}`\n"
-        f"**Official:** `{get_stickerset.set.official}`\n"
-        f"**Archived:** `{get_stickerset.set.archived}`\n"
-        f"**Stickers In Pack:** `{len(get_stickerset.packs)}`\n"
+    OUTPUT = f"**Sticker Title:** `{get_stickerset.set.title}\n`" \
+        f"**Sticker Short Name:** `{get_stickerset.set.short_name}`\n" \
+        f"**Official:** `{get_stickerset.set.official}`\n" \
+        f"**Archived:** `{get_stickerset.set.archived}`\n" \
+        f"**Stickers In Pack:** `{len(get_stickerset.packs)}`\n" \
         f"**Emojis In Pack:**\n{' '.join(pack_emojis)}"
-    )
 
     await event.edit(OUTPUT)
-
-
+    
+    
 @register(outgoing=True, pattern="^.getsticker$")
 async def sticker_to_png(sticker):
     if not sticker.is_reply:
