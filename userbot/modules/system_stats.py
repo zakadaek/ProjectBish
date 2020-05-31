@@ -13,10 +13,14 @@ from os import remove
 from telethon import version
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 from userbot import CMD_HELP, ALIVE_NAME, UPSTREAM_REPO_BRANCH
 =======
 from userbot import bot, CMD_HELP, ALIVE_NAME
 >>>>>>> d7f6b7f83... system_stats: improve alive and add logo
+=======
+from userbot import bot, CMD_HELP, ALIVE_NAME, ALIVE_LOGO
+>>>>>>> 62bbb968a... system_stats: add var for logo
 from userbot.events import register
 
 # ================= CONSTANT =================
@@ -134,46 +138,16 @@ async def pipcheck(pip):
 
 @register(outgoing=True, pattern=r"^\.(?:alive|on)\s?(.)?")
 async def amireallyalive(alive):
-<<<<<<< HEAD
-    """ For .on command, check if the bot is running.  """
-    await alive.edit (f"`ProjectBish` is running with `{UPSTREAM_REPO_BRANCH}`\n"
-                     f"============================================\n"
-                     f"`"
-                     f"⣿⣿⣷⡁⢆⠈⠕⢕⢂⢕⢂⢕⢂⢔⢂⢕⢄⠂⣂⠂⠆⢂⢕⢂⢕⢂⢕⢂⢕⢂\n"
-                     f"⣿⣿⣿⡷⠊⡢⡹⣦⡑⢂⢕⢂⢕⢂⢕⢂⠕⠔⠌⠝⠛⠶⠶⢶⣦⣄⢂⢕⢂⢕\n"
-                     f"⣿⣿⠏⣠⣾⣦⡐⢌⢿⣷⣦⣅⡑⠕⠡⠐⢿⠿⣛⠟⠛⠛⠛⠛⠡⢷⡈⢂⢕⢂\n"
-                     f"⠟⣡⣾⣿⣿⣿⣿⣦⣑⠝⢿⣿⣿⣿⣿⣿⡵⢁⣤⣶⣶⣿⢿⢿⢿⡟⢻⣤⢑⢂\n"
-                     f"⣾⣿⣿⡿⢟⣛⣻⣿⣿⣿⣦⣬⣙⣻⣿⣿⣷⣿⣿⢟⢝⢕⢕⢕⢕⢽⣿⣿⣷⣔\n"
-                     f"⣿⣿⠵⠚⠉⢀⣀⣀⣈⣿⣿⣿⣿⣿⣿⣿⣿⣿⣗⢕⢕⢕⢕⢕⢕⣽⣿⣿⣿⣿\n"
-                     f"⢷⣂⣠⣴⣾⡿⡿⡻⡻⣿⣿⣴⣿⣿⣿⣿⣿⣿⣷⣵⣵⣵⣷⣿⣿⣿⣿⣿⣿⡿\n"
-                     f"⢌⠻⣿⡿⡫⡪⡪⡪⡪⣺⣿⣿⣿⣿⣿⠿⠿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃\n"
-                     f"⠣⡁⠹⡪⡪⡪⡪⣪⣾⣿⣿⣿⣿⠋⠐⢉⢍⢄⢌⠻⣿⣿⣿⣿⣿⣿⣿⣿⠏⠈\n"
-                     f"⡣⡘⢄⠙⣾⣾⣾⣿⣿⣿⣿⣿⣿⡀⢐⢕⢕⢕⢕⢕⡘⣿⣿⣿⣿⣿⣿⠏⠠⠈\n"
-                     f"⠌⢊⢂⢣⠹⣿⣿⣿⣿⣿⣿⣿⣿⣧⢐⢕⢕⢕⢕⢕⢅⣿⣿⣿⣿⡿⢋⢜⠠⠈\n"
-                     f"⠄⠁⠕⢝⡢⠈⠻⣿⣿⣿⣿⣿⣿⣿⣷⣕⣑⣑⣑⣵⣿⣿⣿⡿⢋⢔⢕⣿⠠⠈\n"
-                     f"⠨⡂⡀⢑⢕⡅⠂⠄⠉⠛⠻⠿⢿⣿⣿⣿⣿⣿⣿⣿⣿⡿⢋⢔⢕⢕⣿⣿⠠⠈\n"
-                     f"⠄⠪⣂⠁⢕⠆⠄⠂⠄⠁⡀⠂⡀⠄⢈⠉⢍⢛⢛⢛⢋⢔⢕⢕⢕⣽⣿⣿⠠⠈\n"
-                     f"`"
-                     f"============================================\n"
-                     f"`•  Python Version    :` `{python_version()}`\n"
-                     f"`•  Telethon Version  :` `{version.__version__}`\n"
-                     f"============================================\n"
-                     f"`•  User              :` {DEFAULTUSER}")
-
-=======
     """ For .alive command, check if the bot is running.  """
-    logo = "https://telegra.ph/file/a23496e2c6ac4df79243f.png"
-    output = ("`"
-             "ProjectDils is running...\n"
+    logo = ALIVE_LOGO
+    output = (f"`ProjectBish` is running on `{UPSTREAM_REPO_BRANCH}`\n"
              f"====================================\n"
              f"👤 User     : {DEFAULTUSER}\n"
              f"🐍 Python   : v{python_version()}\n"
              f"⚙️ Telethon : v{version.__version__}\n"
-             f"====================================\n"
-             "`")
+             f"====================================\n")
     await bot.send_file(alive.chat_id, logo, caption=output)
     await alive.delete()
->>>>>>> d7f6b7f83... system_stats: improve alive and add logo
 
 @register(outgoing=True, pattern="^.aliveu")
 async def amireallyaliveuser(username):

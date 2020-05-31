@@ -64,6 +64,14 @@ BOTLOG_CHATID = int(os.environ.get("BOTLOG_CHATID", None))
 BOTLOG = sb(os.environ.get("BOTLOG", "True"))
 LOGSPAMMER = sb(os.environ.get("LOGSPAMMER", "False"))
 
+# Default .alive name
+ALIVE_NAME = os.environ.get("ALIVE_NAME", None)
+
+# Default .alive logo
+ALIVE_LOGO = os.environ.get(
+    "ALIVE_LOGO",
+    "https://telegra.ph/file/a23496e2c6ac4df79243f.png")
+
 # Bleep Blop, this is a bot ;)
 PM_AUTO_BAN = sb(os.environ.get("PM_AUTO_BAN", "False"))
 
@@ -94,9 +102,6 @@ OCR_SPACE_API_KEY = os.environ.get("OCR_SPACE_API_KEY", None)
 
 # Telegraph
 TELEGRAPH_SHORT_NAME = os.environ.get("TELEGRAPH_SHORT_NAME", None)
-
-# Default .alive name
-ALIVE_NAME = os.environ.get("ALIVE_NAME", None)
 
 # remove.bg API key
 REM_BG_API_KEY = os.environ.get("REM_BG_API_KEY", None)
