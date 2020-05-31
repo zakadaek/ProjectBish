@@ -12,7 +12,11 @@ from shutil import which
 from os import remove
 from telethon import version
 
+<<<<<<< HEAD
 from userbot import CMD_HELP, ALIVE_NAME, UPSTREAM_REPO_BRANCH
+=======
+from userbot import bot, CMD_HELP, ALIVE_NAME
+>>>>>>> d7f6b7f83... system_stats: improve alive and add logo
 from userbot.events import register
 
 # ================= CONSTANT =================
@@ -130,6 +134,7 @@ async def pipcheck(pip):
 
 @register(outgoing=True, pattern=r"^\.(?:alive|on)\s?(.)?")
 async def amireallyalive(alive):
+<<<<<<< HEAD
     """ For .on command, check if the bot is running.  """
     await alive.edit (f"`ProjectBish` is running with `{UPSTREAM_REPO_BRANCH}`\n"
                      f"============================================\n"
@@ -155,6 +160,20 @@ async def amireallyalive(alive):
                      f"============================================\n"
                      f"`•  User              :` {DEFAULTUSER}")
 
+=======
+    """ For .alive command, check if the bot is running.  """
+    logo = "https://telegra.ph/file/a23496e2c6ac4df79243f.png"
+    output = ("`"
+             "ProjectDils is running...\n"
+             f"====================================\n"
+             f"👤 User     : {DEFAULTUSER}\n"
+             f"🐍 Python   : v{python_version()}\n"
+             f"⚙️ Telethon : v{version.__version__}\n"
+             f"====================================\n"
+             "`")
+    await bot.send_file(alive.chat_id, logo, caption=output)
+    await alive.delete()
+>>>>>>> d7f6b7f83... system_stats: improve alive and add logo
 
 @register(outgoing=True, pattern="^.aliveu")
 async def amireallyaliveuser(username):
