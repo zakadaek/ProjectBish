@@ -736,6 +736,32 @@ async def lol(lel):
     for i in range(10):
         okay = okay[:-1] + "_-"
         await lel.edit(okay)
+        
+        
+@register(outgoing=True, pattern="^.boobs(?: |$)(.*)")
+async def boobs(e):
+    await e.edit("`Finding some big boobs...`")
+    await sleep(3)
+    await e.edit("`Sending some big boobs...`")
+    nsfw = requests.get('http://api.oboobs.ru/noise/1').json()[0]["preview"]
+    urllib.request.urlretrieve("http://media.oboobs.ru/{}".format(nsfw), "*.jpg")
+    os.rename('*.jpg', 'boobs.jpg')
+    await e.client.send_file(e.chat_id, "boobs.jpg")
+    os.remove("boobs.jpg")
+    await e.delete()
+    
+    
+@register(outgoing=True, pattern="^.butts(?: |$)(.*)")
+async def butts(e):
+    await e.edit("`Finding some beautiful butts...`")
+    await sleep(3)
+    await e.edit("`Sending some beautiful butts...`")
+    nsfw = requests.get('http://api.obutts.ru/noise/1').json()[0]["preview"]
+    urllib.request.urlretrieve("http://media.obutts.ru/{}".format(nsfw), "*.jpg")
+    os.rename('*.jpg', 'butts.jpg')
+    await e.client.send_file(e.chat_id, "butts.jpg")
+    os.remove("butts.jpg")
+    await e.delete()        
 
 
 @register(outgoing=True, pattern="^.(yes|no|maybe|decide)$")
@@ -1378,6 +1404,10 @@ CMD_HELP.update({
     "\nUsage: Do it and find the real fun."
     "\n\n>`.clap`"
     "\nUsage: Praise people!"
+    "\n\n>`.boobs`"
+	"\nUsage: Get b00bs imej"
+	"\n\n>`.butts`"
+	"\nUsage: Get 🅱️utts imej"
     "\n\n>`.f <emoji/character>`"
     "\nUsage: Pay Respects."
     "\n\n>`.bt`"
