@@ -4,18 +4,26 @@
 # you may not use this file except in compliance with the License.
 """ Userbot module for having some fun with people. """
 
-from asyncio import sleep
-from random import choice, getrandbits, randint
-from re import sub
 import time
-
-from collections import deque
-
+import datetime
+from telethon import events
+import io
+import os
+import urllib
+from urllib.request import urlopen
 import requests
-
+from bs4 import BeautifulSoup
+import re
+from re import sub
 from cowpy import cow
+from asyncio import sleep
+from collections import deque
+from random import choice, getrandbits, randint
+from telethon.tl.types import MessageMediaPhoto
+from PIL import Image
+from telethon.tl.functions.account import UpdateNotifySettingsRequest
 
-from userbot import CMD_HELP
+from userbot import bot, CMD_HELP
 from userbot.events import register
 from userbot.modules.admin import get_user_from_event
 
