@@ -658,15 +658,6 @@ async def univsaye(cowmsg):
     await cowmsg.edit(f"`{cheese.milk(text).replace('`', '´')}`")
 
 
-@register(outgoing=True, pattern="^:/$", ignore_unsafe=True)
-async def kek(keks):
-    """ Check yourself ;)"""
-    uio = ["/", "\\"]
-    for i in range(1, 15):
-        time.sleep(0.3)
-        await keks.edit(":" + uio[i % 2])
-
-
 @register(outgoing=True, pattern=r"^.coinflip (.*)")
 async def coin(event):
     r = choice(["heads", "tails"])
@@ -735,15 +726,6 @@ async def slap(replied_user, event):
         victim=slapped, item=item, hits=hit, throws=throw, where=where)
 
     return caption
-
-
-@register(outgoing=True, pattern="^-_-$", ignore_unsafe=True)
-async def lol(lel):
-    """ Ok... """
-    okay = "-_-"
-    for i in range(10):
-        okay = okay[:-1] + "_-"
-        await lel.edit(okay)
         
         
 @register(outgoing=True, pattern="^.boobs(?: |$)(.*)")
@@ -785,14 +767,6 @@ async def decide(event):
                                     str(r["answer"]).upper(),
                                     reply_to=message_id,
                                     file=r["image"])
-
-
-@register(outgoing=True, pattern="^;_;$", ignore_unsafe=True)
-async def fun(e):
-    t = ";_;"
-    for j in range(10):
-        t = t[:-1] + "_;"
-        await e.edit(t)
 
 
 @register(outgoing=True, pattern="^.fp$")
@@ -983,14 +957,6 @@ async def runner_lol(run):
 async def metoo(hahayes):
     """ Haha yes """
     await hahayes.edit(choice(METOOSTR))
-
-
-@register(outgoing=True, pattern="^.Oof$")
-async def Oof(e):
-    t = "Oof"
-    for j in range(16):
-        t = t[:-1] + "of"
-        await e.edit(t)
 
 
 @register(outgoing=True, pattern="^.oem$")
@@ -1362,12 +1328,6 @@ CMD_HELP.update({
     "memes":
     ">`.cowsay`"
     "\nUsage: cow which says things."
-    "\n\n>`:/`"
-    "\nUsage: Check yourself ;)"
-    "\n\n>`-_-`"
-    "\nUsage: Ok..."
-    "\n\n>`;_;`"
-    "\nUsage: Like `-_-` but crying."
     "\n\n>`.cp`"
     "\nUsage: Copypasta the famous meme"
     "\n\n>`.vapor`"
@@ -1380,8 +1340,6 @@ CMD_HELP.update({
     "\nUsage: Invoke the feeling of chaos."
     "\n\n>`Oem`"
     "\nUsage: Oeeeem"
-    "\n\n>`Oof`"
-    "\nUsage: Ooooof"
     "\n\n>`.fp`"
     "\nUsage: Facepalm :P"
     "\n\n>`.moon`"
