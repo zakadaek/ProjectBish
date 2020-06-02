@@ -572,6 +572,20 @@ async def rm_deletedacc(show):
             BOTLOG_CHATID, "#CLEANUP\n"
             f"Cleaned **{del_u}** deleted account(s) !!"
             f"\nCHAT: {show.chat.title}(`{show.chat_id}`)")
+            
+            
+@register(outgoing=True, pattern="^.all$")
+async def tagaso(event):
+    """ For .all command, mention all of the member in the group chat"""
+    if event.fwd_from:
+        return
+    await event.delete()
+    mentions = "@all"
+    chat = await event.get_input_chat()
+    async for user in bot.iter_participants(chat, 500):
+        mentions += f"[\u2063](tg://user?id={user.id})"
+    await bot.send_message(
+        chat, mentions, reply_to=event.message.reply_to_msg_id)            
 
 
 @register(outgoing=True, pattern="^.admins$")
@@ -906,6 +920,8 @@ CMD_HELP.update({
     "\n\n>`.zombies`"
     "\nUsage: Searches for deleted accounts in a group. "
     "Use .zombies clean to remove deleted accounts from the group."
+    "\n\n>`.all`"
+	"\nUsage: Tag all member in the group chat."
     "\n\n>`.admins`"
     "\nUsage: Retrieves a list of admins in the chat."
     "\n\n>`.bots`"
