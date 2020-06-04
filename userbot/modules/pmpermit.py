@@ -21,7 +21,7 @@ UNAPPROVED_MSG = (
     "`wait for me to approve your PM.\n`"
     "`Until then, don't spam My PM or you'll get blocked...\n`"
     "`CAPICHE?\n\n`"
-    "`-Bian's Userbot`")
+    "`-Userbot`")
 # =================================================================
 
 
