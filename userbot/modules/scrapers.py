@@ -39,8 +39,8 @@ from telethon.tl.types import DocumentAttributeAudio
 from userbot.utils import progress, chrome, googleimagesdownload
 
 CARBONLANG = "auto"
-TTS_LANG = "en"
-TRT_LANG = "en"
+TTS_LANG = "id"
+TRT_LANG = "id"
 
 
 @register(outgoing=True, pattern="^.crblang (.*)")
