@@ -639,6 +639,12 @@ HIT = [
 
 WHERE = ["in the chest", "on the head", "on the butt", "on the crotch"]
 
+normiefont = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+              'v', 'w', 'x', 'y', 'z']
+
+weebyfont = ['卂', '乃', '匚', '刀', '乇', '下', '厶', '卄', '工', '丁', '长', '乚', '从', '𠘨', '口', '尸', '㔿', '尺', '丂', '丅', '凵',
+             'リ', '山', '乂', '丫', '乙']
+
 # ===========================================
 
 
@@ -1027,6 +1033,23 @@ async def spongemocktext(mock):
     await mock.edit("".join(reply_text))
 
 
+@register(outgoing=True, pattern="^\.weeb(?: |$)(.*)")
+async def weebify(e):
+    args = e.pattern_match.group(1)
+    if not args:
+        get = await e.get_reply_message()
+        args = get.text
+    if not args:
+        await e.edit("`What I am Supposed to Weebify U Dumb`")
+        return
+    string = '  '.join(args).lower()
+    for normiecharacter in string:
+        if normiecharacter in normiefont:
+            weebycharacter = weebyfont[normiefont.index(normiecharacter)]
+            string = string.replace(normiecharacter, weebycharacter)
+    await e.edit(string)   
+    
+    
 @register(outgoing=True, pattern="^.clap(?: |$)(.*)")
 async def claptext(memereview):
     """ Praise people! """
@@ -1378,6 +1401,8 @@ CMD_HELP.update({
     "\nUsage: Pay Respects."
     "\n\n>`.bt`"
     "\nUsage: Believe me, you will find this useful."
+    "\n\n>`.weeb`"
+    "\nUsage: To Weeb-ify your text."
     "\n\n>`.type`"
     "\nUsage: Just a small command to make your keyboard become a typewriter!"
     "\n\n>`.lfy <query>`"
