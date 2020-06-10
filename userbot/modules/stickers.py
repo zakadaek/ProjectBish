@@ -314,7 +314,7 @@ async def get_pack_info(event):
     await event.edit(OUTPUT)
     
     
-@register(outgoing=True, pattern="^.getsticker$")
+@register(outgoing=True, pattern="^.get$")
 async def sticker_to_png(sticker):
     if not sticker.is_reply:
         await sticker.edit("`NULL information to fetch...`")
@@ -346,14 +346,14 @@ async def sticker_to_png(sticker):
 
 CMD_HELP.update({
     "stickers":
-    ">`.kang [emoji('s)]?`"
+    ">`.curry [emoji('s)]?`"
     "\nUsage: Reply .kang to a sticker or an image to kang it to your userbot pack "
     "\nor specify the emoji you want to."
-    "\n\n>`.kang (emoji['s]]?` [number]?"
+    "\n\n>`.curry (emoji['s]]?` [number]?"
     "\nUsage: Kang's the sticker/image to the specified pack but uses 🤔 as emoji "
     "or choose the emoji you want to."
     "\n\n>`.stkrinfo`"
     "\nUsage: Gets info about the sticker pack."
-    "\n\n>`.getsticker`"
+    "\n\n>`.get`"
     "\nUsage: reply to a sticker to get 'PNG' file of sticker."
 })
