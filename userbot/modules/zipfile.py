@@ -12,7 +12,7 @@ import os
 from userbot import TEMP_DOWNLOAD_DIRECTORY, ZIP_DOWNLOAD_DIRECTORY, bot
 from userbot import CMD_HELP
 # from uniborg.util import admin_cmd, humanbytes, progress, time_formatter
-from userbot.util import admin_cmd, humanbytes, progress, time_formatter
+from userbot.utils import admin_cmd, humanbytes, progress, time_formatter
 
 # ====================
 today = date.today()
