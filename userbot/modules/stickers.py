@@ -22,7 +22,7 @@ KANGING_STR = [
     "Eh... Koq bagus... aku curry ahhh :3",
     "Aku curry ya kakak :)",
     "Curry Sticker dulu yee kan",
-    "ehh, mantep nih.....aku ambil ya qaqa",
+    "ehh, mantep nih.....aku ambil ya kaga",
     "Bagus eaaaa....\nAmbil ahh....",
     "Ini Sticker aku ambil yaa\nDUARR!",
     "leh ugha ni Sticker\nCurry ahh~",
@@ -33,6 +33,8 @@ KANGING_STR = [
     "CURRY TROSS!!!",
 	"Bolehkah saya curry ni sticker\nau ah curry aja hehe",
 	"Curry Sticker ahh.....",
+	"Curry dolo boss",
+	"Swiper jangan mencurry",
 ]
 
 
@@ -241,8 +243,8 @@ async def kang(args):
                 # Ensure user doesn't get spamming notifications
                 await bot.send_read_acknowledge(conv.chat_id)
 
-        await args.edit(f"`Asyique Sukses!`\
-            \n[Klik Disini](t.me/addstickers/{packname}) kalo mau liat hasil curryan",
+        await args.edit(f"Curry Success!\
+            \n[Klik Disini!](t.me/addstickers/{packname})",
                         parse_mode='md')
 
 
