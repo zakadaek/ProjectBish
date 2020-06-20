@@ -164,6 +164,7 @@
       "description": "Input your DEEZER ARL TOKEN",
       "value": "",
       "required": false
+    }  
   },
   "addons": [
     {
