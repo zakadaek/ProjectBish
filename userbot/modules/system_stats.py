@@ -133,9 +133,9 @@ async def amireallyalive(alive):
     logo = ALIVE_LOGO
     output = (f"`ProjectBish` is running on `{UPSTREAM_REPO_BRANCH}`\n"
              f"====================================\n"
-             f"👤 User     : {DEFAULTUSER}\n"
-             f"🐍 Python   : v{python_version()}\n"
-             f"⚙️ Telethon : v{version.__version__}\n"
+             f"🐍 `Python    :` v{python_version()}\n"
+             f"⚙️ `Telethon  :` v{version.__version__}\n"
+             f"👤 `User      :` {DEFAULTUSER}\n"
              f"====================================\n")
     await bot.send_file(alive.chat_id, logo, caption=output)
     await alive.delete()
