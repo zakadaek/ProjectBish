@@ -1,5 +1,5 @@
 <h1 align="center">ProjectBish UserBot</h1>
-<h1 align="center">Experimental</h1>
+
 <h3 align="center">A modular Telegram userbot running on Python 3.8+ with an sqlalchemy database.</h3>
 <h4 align="center">Based on RaphielGang's <a href="https://github.com/RaphielGang/Telegram-UserBot">Paperplane</a> Telegram userbot...</h4>
 <p align="center"><a href="#how-to-host">How To Host</a> | <a href="#credits">Credits</a> | <a href="#setting-up-google-drive">Setting up Google Drive</a> | <a href="#license">License</a></p>
