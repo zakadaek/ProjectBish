@@ -11,16 +11,7 @@ from platform import python_version, uname
 from shutil import which
 from os import remove
 from telethon import version
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-from userbot import CMD_HELP, ALIVE_NAME, UPSTREAM_REPO_BRANCH
-=======
-from userbot import bot, CMD_HELP, ALIVE_NAME
->>>>>>> d7f6b7f83... system_stats: improve alive and add logo
-=======
-from userbot import bot, CMD_HELP, ALIVE_NAME, ALIVE_LOGO
->>>>>>> 62bbb968a... system_stats: add var for logo
+from userbot import CMD_HELP, ALIVE_NAME, UPSTREAM_REPO_BRANCH, ALIVE_LOGO
 from userbot.events import register
 
 # ================= CONSTANT =================
