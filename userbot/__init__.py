@@ -70,7 +70,7 @@ ALIVE_NAME = os.environ.get("ALIVE_NAME", None)
 # Default .alive logo
 ALIVE_LOGO = os.environ.get(
     "ALIVE_LOGO",
-    "https://telegra.ph/file/a23496e2c6ac4df79243f.png")
+    "https://telegra.ph/file/5d3e7f863ff93340637d3.jpg")
 
 # Bleep Blop, this is a bot ;)
 PM_AUTO_BAN = sb(os.environ.get("PM_AUTO_BAN", "False"))
