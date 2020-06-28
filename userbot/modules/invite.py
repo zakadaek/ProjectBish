@@ -3,7 +3,7 @@ from telethon import functions
 from userbot import CMD_HELP
 from userbot.events import register
 
-@register(outgoing=True, pattern="^.invite(?: |$)(.*)")
+@register(outgoing=True, pattern="^\.invite(?: |$)(.*)")
 async def _(event):
     if event.fwd_from:
         return

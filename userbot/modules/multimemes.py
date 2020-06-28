@@ -91,7 +91,7 @@ EMOJI_PATTERN = re.compile(
     "]+")
 
 
-@register(outgoing=True, pattern="^.pch(?: |$)(.*)")
+@register(outgoing=True, pattern="^\.pch(?: |$)(.*)")
 async def quotecmd(message):  # noqa: C901
         if QUOTES_API_TOKEN is None:
             await message.edit("Provide QUOTES_API_TOKEN from http://antiddos.systems/login in config.py or heroku vars first!!")
@@ -258,7 +258,7 @@ def get_markdown(reply):
     return markdown
 
 
-@register(outgoing=True, pattern="^.mmf(?: |$)(.*)")
+@register(outgoing=True, pattern="^\.mmf(?: |$)(.*)")
 async def mim(event):
     if event.fwd_from:
         return 
@@ -363,7 +363,7 @@ async def silently_send_message(conv, text):
     return response
 
 
-@register(outgoing=True, pattern="^.q(?: |$)(.*)")
+@register(outgoing=True, pattern="^\.q(?: |$)(.*)")
 async def quotess(qotli):
     if qotli.fwd_from:
         return 
@@ -401,7 +401,7 @@ async def quotess(qotli):
                                                 [msg.id, response.id])
 
 
-@register(outgoing=True, pattern=r'^.hz(:? |$)(.*)?')
+@register(outgoing=True, pattern=r'^\.hz(:? |$)(.*)?')
 async def hazz(hazmat):
     await hazmat.edit("`Sending information...`")
     level = hazmat.pattern_match.group(2)
@@ -474,7 +474,7 @@ async def hazz(hazmat):
     return os.remove(downloaded_file_name)
 
 
-@register(outgoing=True, pattern=r'^.df(:? |$)([1-8])?')
+@register(outgoing=True, pattern=r'^\.df(:? |$)([1-8])?')
 async def fryerrr(fry):
     await fry.edit("`Sending information...`")
     level = fry.pattern_match.group(2)
@@ -536,7 +536,7 @@ async def fryerrr(fry):
     return os.remove(downloaded_file_name)
 
 
-@register(outgoing=True, pattern="^.waifu(?: |$)(.*)")
+@register(outgoing=True, pattern="^\.waifu(?: |$)(.*)")
 async def waifu(animu):
     text = animu.pattern_match.group(1)
     if not text:

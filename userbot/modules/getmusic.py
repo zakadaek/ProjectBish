@@ -9,7 +9,7 @@ from telethon.tl.functions.account import UpdateNotifySettingsRequest
 from userbot import bot, CMD_HELP
 from userbot.events import register
 
-@register(outgoing=True, pattern="^.netease(?: |$)(.*)")
+@register(outgoing=True, pattern="^\.netease(?: |$)(.*)")
 async def _(event):
     if event.fwd_from:
         return
@@ -36,7 +36,7 @@ async def _(event):
                                        [msg.id, response.id, respond.id])
     await event.delete()
 
-@register(outgoing=True, pattern="^.sdd(?: |$)(.*)")
+@register(outgoing=True, pattern="^\.sdd(?: |$)(.*)")
 async def _(event):
     if event.fwd_from:
         return
@@ -63,7 +63,7 @@ async def _(event):
                                              [msg_start.id, response.id, msg.id, details.id, song.id])
           await event.delete()
 
-@register(outgoing=True, pattern="^.smd(?: |$)(.*)")
+@register(outgoing=True, pattern="^\.smd(?: |$)(.*)")
 async def _(event):
     if event.fwd_from:
         return

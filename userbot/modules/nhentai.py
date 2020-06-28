@@ -11,7 +11,7 @@ from telethon.tl.functions.account import UpdateNotifySettingsRequest
 from userbot import bot, CMD_HELP
 from userbot.events import register
 
-@register(outgoing=True, pattern="^.nhentai(?: |$)(.*)")
+@register(outgoing=True, pattern="^\.nhentai(?: |$)(.*)")
 async def _(event):
     if event.fwd_from:
         return

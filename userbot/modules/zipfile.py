@@ -19,7 +19,7 @@ today = date.today()
 # ====================
 
 #  @borg.on(admin_cmd("compress"))
-@register(outgoing=True, pattern=r"^.compress(?: |$)(.*)")
+@register(outgoing=True, pattern=r"^\.compress(?: |$)(.*)")
 async def _(event):
     #Prevent Channel Bug to use update
     if event.is_channel and not event.is_group:
@@ -62,7 +62,7 @@ async def _(event):
     await event.delete()
 
 
-@register(outgoing=True, pattern=r"^.addzip(?: |$)(.*)")
+@register(outgoing=True, pattern=r"^\.addzip(?: |$)(.*)")
 async def addzip(add):
     """ Add file to zip list """
     #Prevent Channel Bug to use update
@@ -97,7 +97,7 @@ async def addzip(add):
             return
 
 
-@register(outgoing=True, pattern=r"^.upzip(?: |$)(.*)")
+@register(outgoing=True, pattern=r"^\.upzip(?: |$)(.*)")
 async def upload_zip(up):
     if not os.path.isdir(ZIP_DOWNLOAD_DIRECTORY):
         await up.edit(f"`Files not found`")
