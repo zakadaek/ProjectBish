@@ -233,7 +233,7 @@ with bot:
         quit(1)
 
 async def check_alive():
-    await bot.send_message(BOTLOG_CHATID, f"`BOT ALIVE \nJoin Support group` @aoneid_support")
+    await bot.send_message(BOTLOG_CHATID, f"__PROJECTBISH IS NOW ALIVE AND RUNNING ON__ `{UPSTREAM_REPO_BRANCH}`")
     return
 
 with bot:
