@@ -2,7 +2,7 @@
 #
 # Licensed under the Raphielscape Public License, Version 1.c (the "License");
 # you may not use this file except in compliance with the License.
-# Credits to Hitalo-Sama and FTG Modules
+# Credits to Hitalo-Sama and FTG Modules for the chatinfo module
 """ Userbot module containing userid, chatid and log commands"""
 
 from asyncio import sleep
