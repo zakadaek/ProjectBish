@@ -1,8 +1,12 @@
 <h1 align="center">ProjectBish UserBot</h1>
-
+![BugChecker](https://github.com/BianSepang/ProjectBish/workflows/BugChecker/badge.svg?branch=master)
 <h3 align="center">A modular Telegram userbot running on Python 3.8+ with an sqlalchemy database.</h3>
 <h4 align="center">Based on RaphielGang's <a href="https://github.com/RaphielGang/Telegram-UserBot">Paperplane</a> Telegram userbot...</h4>
 <p align="center"><a href="#how-to-host">How To Host</a> | <a href="#credits">Credits</a> | <a href="#setting-up-google-drive">Setting up Google Drive</a> | <a href="#license">License</a></p>
+<p align="center">&nbsp;</p>
+<h2 align="center">Generate String Session</h2>
+<h5 align="center">Click the button below to Generate String Session on repl.it</h5>
+<p align="center"><a href="http://stringsession.biansepang.repl.run/"> <img src="https://img.shields.io/badge/run-string__session.py-blue?style=for-the-badge&logo=repl.it" alt="generate_string_session" /></a></p>
 <p align="center">&nbsp;</p>
 <h2 align="center">How To Host</h2>
 <h5 align="center">The easiest way to deploy this derpfest! is click on the image below</h5>
