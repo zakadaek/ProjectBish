@@ -321,8 +321,8 @@ async def upload_track(track_location, message):
 CMD_HELP.update({
     "getmusic":
     ">`.song` **Artist - Song Title**"
-    "\nUsage: Finding and uploading song.\n"
-    ">\n\n`.netease` **<Artist - Song Title>**"
+    "\nUsage: Finding and uploading song."
+    "\n\n>`.netease` **<Artist - Song Title>**"
     "\nUsage: Download music with @WooMaiBot"
     "\n\n>`.sdd` **<Spotify/Deezer Link>**"
     "\nUsage: Download Spotify/Deezer Music with @MusicHuntersBot"
