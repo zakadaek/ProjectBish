@@ -25,6 +25,7 @@ jikanpy
 lxml
 oauth2client
 Pillow
+pendulum
 psycopg2
 psycopg2-binary
 pybase64
