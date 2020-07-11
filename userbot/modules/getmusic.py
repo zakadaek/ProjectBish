@@ -265,7 +265,7 @@ CMD_HELP.update({
     ">`.song` **Artist - Song Title**"
     "\nUsage: Finding and uploading song."
     "\n\n>`.vsong` **Artist - Song Title**"
-    "\nUsage: Finding and uploading videoclip.\n"
+    "\nUsage: Finding and uploading videoclip."
     "\n\n>`.net` **<Artist - Song Title>**"
     "\nUsage: Download music with @WooMaiBot"
     "\n\n>`.sdd` **<Spotify/Deezer Link>**"
